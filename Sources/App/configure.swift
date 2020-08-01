@@ -30,5 +30,7 @@ public func configure(
                         database: DatabaseIdentifier<User.Database>.sqlite)
     migrationConfig.add(model: Token.self,
                         database: DatabaseIdentifier<Token.Database>.sqlite)
+    migrationConfig.add(model: Post.self,
+                        database: DatabaseIdentifier<Post.Database>.sqlite)
     services.register(migrationConfig)
 }
