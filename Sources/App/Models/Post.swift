@@ -9,7 +9,7 @@ import Foundation
 import Vapor
 import FluentSQLite
 
-struct Post: Content, SQLiteModel, Migration {
+struct Post: Content, SQLiteModel, Migration, Validatable {
     var id: Int?
     var username: String
     var message: String
@@ -29,4 +29,14 @@ struct PostInput: RequestDecodable {
     var token: UUID
     var message: String
     var reply: Int?
+}
+
+extension Post {
+    static func validations() throws -> Validations<Post> {
+        var validations = Validations(Post.self)
+        try validations.add(\.username, .count(1...) && .alphanumeric)
+        try validations.add(\.message, .count(2...))
+        try validations.add(\.parent, .range(0...))
+        return validations
+    }
 }

@@ -28,7 +28,6 @@ public func routes(_ router: Router) throws {
     }
     let posts = router.grouped("posts")
     posts.post(PostInput.self) { req, postIn -> Future<Post> in
-        guard !postIn.message.isEmpty else { throw Abort(.badRequest) }
         let reply = postIn.reply ?? 0
         return Token.find(postIn.token, on: req).flatMap(to: Post.self) { token in
             guard let token = token else { throw Abort(.unauthorized) }
@@ -38,6 +37,7 @@ public func routes(_ router: Router) throws {
             }
             let post = Post(id: nil, username: token.username,
                             message: postIn.message, parent: reply, date: Date())
+            try post.validate()
             return post.create(on: req)
         }
     }
